@@ -44,6 +44,22 @@ def create_app(test_config=None):
                 'plant' : plant.format()
             })
 
+    @app.route('/plants/<int:plant_id>', methods=['DELETE'])
+    def delete_plant(plant_id):
+        plant = Plant.query.filter(Plant.id==plant_id).one_or_none()
+        if plant is None:
+            abort(404)
+        try:
+            plant.delet
+            return jsonify({
+                'success' : True,
+                'delete_plant' : plant_id,           
+            })
+        except:
+            abort(422)
+
+
+
     @app.errorhandler(404)
     def not_found(error):
         return jsonify({
@@ -51,5 +67,6 @@ def create_app(test_config=None):
             'error' : 404,
             'message' : "Not Found"
         }), 404
+
 
     return app
