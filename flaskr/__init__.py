@@ -33,6 +33,33 @@ def create_app(test_config=None):
             'total_plants' : len(formatted_plants)
         })
 
+    @app.route('/plants', methods=['POST'])
+    def create_plant():
+        body=request.get_json()
+        new_name = body.get('name', None)
+        new_scientific_name = body.get('scientific_name', None)
+        new_is_poisonous = body.get('is_poisonous', None)
+        new_primary_color = body.get('primary_color', None)
+
+        if new_is_poisonous:
+            new_poisonous = bool(new_is_poisonous)
+
+        try:
+            plant = Plant(
+                name=new_name, 
+                scientific_name=new_scientific_name, 
+                is_poisonous=new_poisonous, 
+                primary_color=new_primary_color
+            )
+            plant.insert()
+
+            return jsonify({
+                'success' : True,
+                'created_id' : plant.id
+            })
+        except:
+            abort(422)
+
     @app.route('/plants/<int:plant_id>', methods=['GET'])
     def get_specific_plant(plant_id):
 
