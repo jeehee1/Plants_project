@@ -1,5 +1,8 @@
 from flask import Flask, jsonify, request, abort
 from flask_cors.decorator import cross_origin
+from sqlalchemy.sql.elements import BooleanClauseList
+from sqlalchemy.sql.sqltypes import BOOLEAN, Boolean, String
+from sqlalchemy.sql.type_api import BOOLEANTYPE
 from models import setup_db, Plant
 from flask_cors import CORS
 
@@ -30,7 +33,7 @@ def create_app(test_config=None):
             'total_plants' : len(formatted_plants)
         })
 
-    @app.route('/plants/<int:plant_id>')
+    @app.route('/plants/<int:plant_id>', methods=['GET'])
     def get_specific_plant(plant_id):
 
         plant = Plant.query.filter(Plant.id == plant_id).one_or_none()
@@ -44,13 +47,37 @@ def create_app(test_config=None):
                 'plant' : plant.format()
             })
 
+    @app.route('/plants/<int:plant_id>', methods=['PATCH'])
+    def update_plant(plant_id):
+        body=request.get_json()
+        try:
+            plant = Plant.query.filter(Plant.id==plant_id).one_or_none()
+            if plant is None:
+                abort(404)
+            if 'scientific_name' in body:
+                plant.scientific_name = body.get('scientific_name')
+            # if 'is_poisonous' in body:
+            #     plant.is_poisonous = body.get('is_poisonous')
+            if 'primary_color' in body:
+                plant.primary_color = body.get('primary_color')
+            plant.update()
+
+            return jsonify({
+                'success' : True,
+                'plant' : plant.format()
+            })
+        except:
+            abort(400)
+
+        
+
     @app.route('/plants/<int:plant_id>', methods=['DELETE'])
     def delete_plant(plant_id):
         plant = Plant.query.filter(Plant.id==plant_id).one_or_none()
         if plant is None:
             abort(404)
         try:
-            plant.delet
+            plant.delete()
             return jsonify({
                 'success' : True,
                 'delete_plant' : plant_id,           
