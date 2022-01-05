@@ -41,9 +41,6 @@ def create_app(test_config=None):
         new_is_poisonous = body.get('is_poisonous', None)
         new_primary_color = body.get('primary_color', None)
 
-        # if new_is_poisonous:
-        #     new_poisonous = bool(new_is_poisonous)
-
         try:
             plant = Plant(
                 name=new_name, 
@@ -83,8 +80,8 @@ def create_app(test_config=None):
                 abort(404)
             if 'scientific_name' in body:
                 plant.scientific_name = body.get('scientific_name')
-            # if 'is_poisonous' in body:
-            #     plant.is_poisonous = body.get('is_poisonous')
+            if 'is_poisonous' in body:
+                plant.is_poisonous = body.get('is_poisonous')
             if 'primary_color' in body:
                 plant.primary_color = body.get('primary_color')
             plant.update()
