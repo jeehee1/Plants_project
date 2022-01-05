@@ -41,14 +41,14 @@ def create_app(test_config=None):
         new_is_poisonous = body.get('is_poisonous', None)
         new_primary_color = body.get('primary_color', None)
 
-        if new_is_poisonous:
-            new_poisonous = bool(new_is_poisonous)
+        # if new_is_poisonous:
+        #     new_poisonous = bool(new_is_poisonous)
 
         try:
             plant = Plant(
                 name=new_name, 
                 scientific_name=new_scientific_name, 
-                is_poisonous=new_poisonous, 
+                is_poisonous=new_is_poisonous,
                 primary_color=new_primary_color
             )
             plant.insert()
